@@ -1,0 +1,14 @@
+version: '2'
+services:
+   rsyslog:
+       image: fabriziogaliano/rsyslog:1.0
+       
+       volumes:
+          - "./etc/rsyslog.conf:/etc/rsyslog.conf"
+          - "./rsyslog.d:/etc/rsyslog.d"
+
+       ports:
+          - "514:514"
+          - "514:514/udp"
+
+       restart: always
