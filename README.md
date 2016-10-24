@@ -14,7 +14,7 @@ docker run -d -p 514:514 -p 514:514/udp fabriziogaliano/rsyslog
 version: '2'
 services:
    rsyslog:
-       image: fabriziogaliano/rsyslog:1.0
+       image: fabriziogaliano/rsyslog
 
        container_name: rsyslog
 
