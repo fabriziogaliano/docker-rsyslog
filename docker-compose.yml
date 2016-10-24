@@ -2,10 +2,13 @@ version: '2'
 services:
    rsyslog:
        image: fabriziogaliano/rsyslog:1.0
-       
+      
+       container_name: rsyslog
+ 
        volumes:
           - "./etc/rsyslog.conf:/etc/rsyslog.conf"
           - "./rsyslog.d:/etc/rsyslog.d"
+          - "./logs:/var/log"
 
        ports:
           - "514:514"
