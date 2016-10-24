@@ -40,9 +40,7 @@ logging:
            syslog-address: "tcp://rsyslog.example.com:514"
 ```
 
-### Advanced Configuration for Rsyslog
-
-There are 3 config file very usefull on this image:
+## Advanced Configuration for Rsyslog, there are 3 config file very usefull on this image:
 
 # Collecting and divide log Locally [ 30-docker.conf ]
 
