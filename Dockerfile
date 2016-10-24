@@ -8,7 +8,8 @@ RUN  apk add --update rsyslog \
 RUN mkdir -p /var/log/docker \
     && mkdir -p /var/log/docker/no_tag/ \
     && mkdir -p /var/log/remote/ \
-    && chmod 777 /var/log/docker -R && chmod 777 /var/log/remote/ -R
+    && mkdir -p /var/spool/rsyslog \
+    && chmod 777 /var/log/docker -R && chmod 777 /var/log/remote/ -R && chmod 777 /var/spool/rsyslog
 
 EXPOSE 514 514/udp
 
