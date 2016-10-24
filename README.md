@@ -40,7 +40,7 @@ logging:
            syslog-address: "tcp://rsyslog.example.com:514"
 ```
 
-## Advanced Configuration for Rsyslog
+### Advanced Configuration for Rsyslog
 
 There are 3 config file very usefull on this image:
 
