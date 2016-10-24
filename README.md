@@ -1,4 +1,5 @@
 # docker-rsyslog
+[![](https://images.microbadger.com/badges/image/fabriziogaliano/docker-rsyslog.svg)](https://microbadger.com/images/fabriziogaliano/docker-rsyslog "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/fabriziogaliano/docker-rsyslog.svg)](https://microbadger.com/images/fabriziogaliano/docker-rsyslog "Get your own version badge on microbadger.com")
 
 Docker RSyslog for collecting - divide and forward Log from containers
 
