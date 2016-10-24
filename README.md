@@ -93,7 +93,7 @@ action(
    )
 ```
 
-# Accept incoming log from remote server [ 35-incoming-logs ] ( up this configuration only on concentrator server )
+# Accept incoming log from remote server [ 35-incoming-logs ] ( enable this configuration only on concentrator server )
 
 ```
 $ModLoad imtcp
