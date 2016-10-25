@@ -1,7 +1,7 @@
 version: '2'
 services:
    rsyslog:
-       image: fabriziogaliano/rsyslog
+       image: fabriziogaliano/docker-rsyslog
       
        container_name: rsyslog
  
