@@ -6,7 +6,7 @@ Docker RSyslog for collecting - divide and forward Log from containers
 ## Quick Start
 
 ```
-docker run -d -p 514:514 -p 514:514/udp fabriziogaliano/rsyslog
+docker run -d -p 514:514 -p 514:514/udp fabriziogaliano/docker-rsyslog
 ```
 
 ## Docker-Compose file (Strongly adviced)
@@ -15,7 +15,7 @@ docker run -d -p 514:514 -p 514:514/udp fabriziogaliano/rsyslog
 version: '2'
 services:
    rsyslog:
-       image: fabriziogaliano/rsyslog
+       image: fabriziogaliano/docker-rsyslog
 
        container_name: rsyslog
 
