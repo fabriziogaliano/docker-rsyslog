@@ -20,9 +20,6 @@ $ActionSendStreamDriverMode 1 # run driver in TLS-only mode
 module(load="imtcp")       # TCP listener support
 
 #input(type="imudp" port="514")
-#input(type="imtcp" port="10514")
-
-#$ModLoad imtcp
 input(type="imtcp" port="10514" ruleset="remote")
 
 # Include all .conf files in /etc/rsyslog.d

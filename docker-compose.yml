@@ -13,7 +13,6 @@ services:
 
        ports:
           - "10514:10514"
-          - "514:514"
           - "514:514/udp"
 
        restart: always
