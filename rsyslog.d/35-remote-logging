@@ -13,13 +13,13 @@ template(name="RemoteForwardFormat" type="list") {
 action(
    type="omfwd"
    protocol="tcp"
-   target="rsyslog.example.com"
-   port="514"
+   target="rlog.example.com"
+   port="10514"
    template="RemoteForwardFormat"
    queue.SpoolDirectory="/var/spool/rsyslog"
-   queue.FileName="remote"
+   queue.FileName="remoteQueueForward"
    queue.MaxDiskSpace="1g"
    queue.SaveOnShutdown="on"
-   queue.Type="LinkedList"
+   queue.Type="Disk"
    ResendLastMSGOnReconnect="on"
    )

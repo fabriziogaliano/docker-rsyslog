@@ -3,7 +3,7 @@ services:
    rsyslog:
        image: fabriziogaliano/docker-rsyslog
       
-       container_name: rsyslog
+       container_name: rsyslog-incoming
  
        volumes:
           - "./etc/rsyslog.conf:/etc/rsyslog.conf"
@@ -13,6 +13,5 @@ services:
 
        ports:
           - "10514:10514"
-          - "514:514/udp"
 
        restart: always

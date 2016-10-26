@@ -13,13 +13,8 @@ $ActionSendStreamDriverMode 1 # run driver in TLS-only mode
 
 #### MODULES ####
 
-#module(load="imuxsock")    # local system logging support (e.g. via logger command)
-#module(load="imklog")     # kernel logging support (previously done by rklogd)
-#module(load="immark")      # --MARK-- message support
-#module(load="imudp")       # UDP listener support
 module(load="imtcp")       # TCP listener support
 
-#input(type="imudp" port="514")
 input(type="imtcp" port="10514" ruleset="remote")
 
 # Include all .conf files in /etc/rsyslog.d
