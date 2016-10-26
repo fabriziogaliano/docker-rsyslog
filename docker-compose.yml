@@ -9,8 +9,10 @@ services:
           - "./etc/rsyslog.conf:/etc/rsyslog.conf"
           - "./rsyslog.d:/etc/rsyslog.d"
           - "./logs:/var/log"
+          - "./certs-tls:/etc/certs-tls"
 
        ports:
+          - "10514:10514"
           - "514:514"
           - "514:514/udp"
 
