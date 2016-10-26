@@ -1,15 +1,24 @@
 # docker-rsyslog
 [![](https://images.microbadger.com/badges/image/fabriziogaliano/docker-rsyslog.svg)](https://microbadger.com/images/fabriziogaliano/docker-rsyslog "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/fabriziogaliano/docker-rsyslog.svg)](https://microbadger.com/images/fabriziogaliano/docker-rsyslog "Get your own version badge on microbadger.com")
 
-Docker RSyslog for collecting - divide and forward Log from containers
+Docker RSyslog for collecting - divide and forward Log ( in TLS ) from containers
 
-## Quick Start
+## Quick start
+
+# Run docker on Local-RemoteForwarder
 
 ```
-docker run -d -p 514:514 -p 514:514/udp fabriziogaliano/docker-rsyslog
+docker run -d -p 514:514:udp fabriziogaliano/docker-rsyslog
 ```
 
-## Docker-Compose file (Strongly adviced)
+# Run docker on Concentrator-Incoming 
+
+```
+docker run -d -p 10514:10514 fabriziogaliano/docker-rsyslog
+```
+
+
+## Example Docker-Compose file for Local-Forwarder (Strongly adviced)
 
 ```
 version: '2'
@@ -17,28 +26,50 @@ services:
    rsyslog:
        image: fabriziogaliano/docker-rsyslog
 
-       container_name: rsyslog
+       container_name: rsyslog-local-forward
 
        volumes:
           - "./etc/rsyslog.conf:/etc/rsyslog.conf"
           - "./rsyslog.d:/etc/rsyslog.d"
           - "./logs:/var/log"
+          - "./spool:/var/spool/rsyslog"
 
        ports:
-          - "514:514"
           - "514:514/udp"
 
        restart: always
 ```
 
-## Configuration of the log driver
+## Example Docker-Compose file for Concentrator-Incoming (Strongly adviced)
+
+```
+version: '2'
+services:
+   rsyslog:
+       image: fabriziogaliano/docker-rsyslog
+
+       container_name: rsyslog-incoming
+
+       volumes:
+          - "./etc/rsyslog.conf:/etc/rsyslog.conf"
+          - "./rsyslog.d:/etc/rsyslog.d"
+          - "./logs:/var/log"
+          - "./certs-tls:/etc/certs-tls"
+
+       ports:
+          - "10514:10514"
+
+       restart: always
+```
+
+## Configuration of the docker-compose file for the syslog log driver
 
 ```
 logging:
          driver: syslog
          options:
-           tag: docker/custom-image-name
-           syslog-address: "tcp://rsyslog.example.com:514"
+           tag: prod/moduleId
+           syslog-address: "udp://rlog.example.com:514"
 ```
 
 ## Advanced Configuration for Rsyslog, there are 3 config file very usefull on this image:
@@ -50,16 +81,13 @@ $FileCreateMode 0644
 template(name="DockerLogFileName" type="list") {
    constant(value="/var/log/docker/")
    property(name="syslogtag" securepath="replace" \
-            regex.expression="docker/\\(.*\\)\\[" regex.submatch="1")
+            regex.expression="dev/\\(.*\\)\\[" regex.submatch="1")
    constant(value="/docker.log")
 }
-if $programname == 'docker' then \
-  /var/log/docker/combined.log
-if $programname == 'docker' then \
-  if $syslogtag contains 'docker/' then \
-    ?DockerLogFileName
-  else
-    /var/log/docker/no_tag/docker.log
+
+/var/log/docker/combined.log
+if $syslogtag contains 'dev/' then ?DockerLogFileName
+
 $FileCreateMode 0600
 ```
 
@@ -81,14 +109,14 @@ template(name="RemoteForwardFormat" type="list") {
 action(
    type="omfwd"
    protocol="tcp"
-   target="rsyslog.example.com"
-   port="514"
+   target="rlog.example.com"
+   port="10514"
    template="RemoteForwardFormat"
    queue.SpoolDirectory="/var/spool/rsyslog"
-   queue.FileName="remote"
+   queue.FileName="remoteQueueForwarding"
    queue.MaxDiskSpace="1g"
    queue.SaveOnShutdown="on"
-   queue.Type="LinkedList"
+   queue.Type="Disk"
    ResendLastMSGOnReconnect="on"
    )
 ```
@@ -96,30 +124,35 @@ action(
 # Accept incoming log from remote server [ 35-incoming-logs ] ( enable this configuration only on concentrator server )
 
 ```
-$ModLoad imtcp
-input(type="imtcp" port="514" ruleset="remote")
-template(name="PerHostDockerLogFileName" type="list") {
-   constant(value="/var/log/remote/")
-   property(name="hostname" securepath="replace")
-   constant(value="/")
-   property(name="$year")
-   constant(value="/")
-   property(name="$month")
-   constant(value="/")
-   property(name="$day")
-   constant(value="/docker/")
+template(name="PerHostDockerProdLogFileName" type="list") {
+   constant(value="/var/log/remote/docker/prod/")
    property(name="syslogtag" securepath="replace" \
-   regex.expression="docker/\\(.*\\)\\[" regex.submatch="1")
+   regex.expression="prod/\\(.*\\)\\[" regex.submatch="1")
+   constant(value="/docker.log")
+}
+template(name="PerHostDockerDevLogFileName" type="list") {
+   constant(value="/var/log/remote/docker/dev/")
+   property(name="syslogtag" securepath="replace" \
+   regex.expression="dev/\\(.*\\)\\[" regex.submatch="1")
    constant(value="/docker.log")
 }
 template(name="PerHostDockerCombinedLogFileName" type="list") {
    constant(value="/var/log/remote/")
-   property(name="hostname" securepath="replace")
-   constant(value="/")
-   property(name="$year")
-   constant(value="/")
-   property(name="$month")
-   constant(value="/")
-   property(name="$day")
+   property(name="$year" securepath="replace")
    constant(value="/docker/combined.log")
+}
+
+ruleset(name="remote") {
+   $FileCreateMode 0644
+   $DirCreateMode 0755
+   if $syslogtag contains 'prod/' then {
+      ?PerHostDockerProdLogFileName
+      /var/log/remote/docker/prod/combined.log
+     }
+
+   if $syslogtag contains 'dev/' then {
+      ?PerHostDockerDevLogFileName
+      /var/log/remote/docker/dev/combined.log
+     }
+}
 ```
